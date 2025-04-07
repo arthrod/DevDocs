@@ -12,6 +12,7 @@ import asyncio
 from pathlib import Path
 from datetime import datetime
 from .crawler import discover_pages, crawl_pages, DiscoveredPage, CrawlResult, url_to_filename, in_memory_files, is_individual_file
+from security import safe_requests
 
 # Configure logging
 logging.basicConfig(
@@ -169,7 +170,7 @@ async def get_crawl4ai_status():
         crawl4ai_url = os.environ.get("CRAWL4AI_URL", "http://crawl4ai:11235")
         
         try:
-            response = requests.get(f"{crawl4ai_url}/health", timeout=5)
+            response = safe_requests.get(f"{crawl4ai_url}/health", timeout=5)
             if response.status_code == 200:
                 logger.info("Crawl4AI service is operational")
                 return {
@@ -227,7 +228,7 @@ async def test_crawl4ai(request: TestCrawl4AIRequest):
             for attempt in range(max_attempts):
                 logger.info(f"Polling for task {task_id} result (attempt {attempt+1}/{max_attempts})")
                 try:
-                    status_response = requests.get(
+                    status_response = safe_requests.get(
                         f"{crawl4ai_url}/task/{task_id}", 
                         headers=headers,
                         timeout=10
