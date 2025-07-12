@@ -4,6 +4,7 @@ import sys
 import os
 import socket
 import json
+from security import safe_requests
 
 # Get API token from environment or use default
 API_TOKEN = os.environ.get("CRAWL4AI_API_TOKEN", "devdocs-demo-key")
@@ -26,7 +27,7 @@ def test_health():
     """Test the health endpoint of the Crawl4AI service"""
     try:
         print("Testing health endpoint...")
-        health = requests.get(f"{CRAWL4AI_URL}/health", timeout=5)
+        health = safe_requests.get(f"{CRAWL4AI_URL}/health", timeout=5)
         print(f"Health check status code: {health.status_code}")
         print(f"Health check response: {health.json()}")
         return True
@@ -57,7 +58,7 @@ def test_unsecured():
             print("\nPolling for task result...")
             for i in range(10):
                 print(f"Poll attempt {i+1}/10")
-                status_response = requests.get(
+                status_response = safe_requests.get(
                     f"{CRAWL4AI_URL}/task/{task_id}",
                     timeout=5
                 )
@@ -110,7 +111,7 @@ def test_secured():
             print("\nPolling for task result...")
             for i in range(10):
                 print(f"Poll attempt {i+1}/10")
-                status_response = requests.get(
+                status_response = safe_requests.get(
                     f"{CRAWL4AI_URL}/task/{task_id}",
                     headers=headers,
                     timeout=5

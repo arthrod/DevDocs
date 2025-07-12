@@ -9,6 +9,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from urllib.parse import urljoin, urlparse, urlsplit
 import re
+from security import safe_requests
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -433,7 +434,7 @@ async def discover_pages(
                 poll_url = f"{CRAWL4AI_URL}/task/{task_id}"
                 logger.info(f"Sending GET request to {poll_url}")
                 
-                status_response = requests.get(
+                status_response = safe_requests.get(
                     poll_url,
                     headers=headers,
                     timeout=10
@@ -798,7 +799,7 @@ async def crawl_pages(pages: List[DiscoveredPage], root_url: str = None) -> Craw
                 for attempt in range(max_attempts):
                     logger.info(f"Polling for task {task_id} result (attempt {attempt+1}/{max_attempts})")
                     try:
-                        status_response = requests.get(
+                        status_response = safe_requests.get(
                             f"{CRAWL4AI_URL}/task/{task_id}",
                             headers=headers,
                             timeout=10
